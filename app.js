@@ -4,8 +4,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 // Local imports
-const adminData = require("./routes/admin");
-const shopRoute = require("./routes/shop");
+const adminRoutes = require("./routes/admin");
+const shopRoutes = require("./routes/shop");
+const errorController = require("./controllers/error");
 
 // Global Variables
 const app = express();
@@ -19,12 +20,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
 // Routes
-app.use("/admin", adminData.routes);
-app.use(shopRoute);
+app.use("/admin", adminRoutes);
+app.use(shopRoutes);
 
-app.use((req, res, next) => {
-  res.render("404", { pageTitle: "Page Not Found", path: "" });
-});
+app.use(errorController.get404);
 
 // Server listening
 app.listen(PORT, () => {
