@@ -1,9 +1,9 @@
-<%- include("includes/head.ejs") %>
+<%- include("../includes/head.ejs") %>
 <link rel="stylesheet" href="/css/product.css" />
 </head>
 
 <body>
-  <%- include("includes/navigation.ejs") %>
+  <%- include("../includes/navigation.ejs") %>
   <main>
     <% if(prods.length > 0) { %>
     <div class="grid">
@@ -15,17 +15,20 @@
           </h1>
         </header>
         <div class="card__image">
-          <img src="https://knowledgequest.aasl.org/wp-content/uploads/2015/01/books.png" alt="<%= product.title %>" />
+          <img src="<%= product.imgUrl %>" alt="<%= product.title %>" />
         </div>
         <div class="card__content">
-          <h2 class="product__price">$19.99</h2>
+          <h2 class="product__price">$
+            <%= product.price %>
+          </h2>
           <p class="product__description">
-            A very interesting book about so many even more interesting
-            things!
+            <%= product.description %>
           </p>
         </div>
         <div class="card__actions">
-          <button class="btn">Add to Cart</button>
+          <form action="/add-to-cart" method="post">
+            <button class="btn" type="submit">Add to Cart</button>
+          </form>
         </div>
       </article>
       <% } %>
@@ -34,4 +37,4 @@
     <h1>No Products</h1>
     <% } %>
   </main>
-  <%- include("includes/end.ejs") %>
+  <%- include("../includes/end.ejs") %>
