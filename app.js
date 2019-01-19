@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const errorController = require("./controllers/error");
+const sequelize = require("./util/database");
 
 // Global Variables
 const app = express();
@@ -25,7 +26,11 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-// Server listening
-app.listen(PORT, () => {
-  console.log(`Server Started at port ${PORT}`);
+sequelize.sync().then(result => {
+  // Server listening
+  app.listen(PORT, () => {
+    console.log(`Server Started at port ${PORT}`);
+  });
+}).catch(err => {
+  console.log(err);
 });
