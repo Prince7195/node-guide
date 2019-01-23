@@ -2,12 +2,12 @@
 const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
+const monsoose = require("mongoose");
 
 // Local imports
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const errorController = require("./controllers/error");
-const { mongoConnect } = require("./util/database");
 const User = require("./models/user");
 
 // Global Variables
@@ -37,8 +37,12 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-mongoConnect(() => {
-  app.listen(PORT, () => {
-    console.log(`Server Started at port ${PORT}`);
+monsoose.connect("mongodb+srv://user:user@cluster0-uyecl.mongodb.net/shop?retryWrites=true")
+  .then(result => {
+    app.listen(PORT, () => {
+      console.log(`Server Started at port ${PORT}`);
+    });
+  })
+  .catch(err => {
+    console.log(err);
   });
-});
