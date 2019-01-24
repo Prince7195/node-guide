@@ -2,7 +2,7 @@
 const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
-const monsoose = require("mongoose");
+const mongoose = require("mongoose");
 
 // Local imports
 const adminRoutes = require("./routes/admin");
@@ -21,9 +21,9 @@ app.set("views", "views");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use((req, res, next) => {
-  User.findById("5c44a942ff78890500165bf4")
+  User.findById("5c49f39f059b4e06e072aa85")
     .then(user => {
-      req.user = new User(user.name, user.email, user.cart, user._id);
+      req.user = user;
       next();
     })
     .catch(err => {
@@ -37,8 +37,22 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-monsoose.connect("mongodb+srv://user:user@cluster0-uyecl.mongodb.net/shop?retryWrites=true")
+mongoose.connect("mongodb+srv://user:user@cluster0-uyecl.mongodb.net/shop?retryWrites=true", { useNewUrlParser: true })
   .then(result => {
+    User.findOne()
+      .then(user => {
+        if (!user) {
+          const user = new User({
+            name: "Vijay",
+            email: "vijay@sample.com",
+            cart: {
+              items: []
+            }
+          });
+          user.save();
+        }
+      });
+
     app.listen(PORT, () => {
       console.log(`Server Started at port ${PORT}`);
     });
