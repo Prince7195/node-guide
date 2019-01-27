@@ -59,20 +59,6 @@ app.use(errorController.get404);
 
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
   .then(result => {
-    User.findOne()
-      .then(user => {
-        if (!user) {
-          const user = new User({
-            name: "Vijay",
-            email: "vijay@sample.com",
-            cart: {
-              items: []
-            }
-          });
-          user.save();
-        }
-      });
-
     app.listen(PORT, () => {
       console.log(`Server Started at port ${PORT}`);
     });
