@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
+const flash = require("connect-flash");
 
 // Local imports
 const adminRoutes = require("./routes/admin");
@@ -37,6 +38,7 @@ app.use(session({
   store: store
 }));
 app.use(csrfProtuction);
+app.use(flash())
 
 // User Check
 app.use((req, res, next) => {
