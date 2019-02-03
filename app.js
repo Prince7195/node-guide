@@ -12,7 +12,7 @@ const flash = require("connect-flash");
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
-const errorController = require("./controllers/error");
+const { get404 } = require("./controllers/error");
 const User = require("./models/user");
 
 // Global Variables
@@ -38,7 +38,13 @@ app.use(session({
   store: store
 }));
 app.use(csrfProtuction);
-app.use(flash())
+app.use(flash());
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
 
 // User Check
 app.use((req, res, next) => {
@@ -47,18 +53,15 @@ app.use((req, res, next) => {
   }
   User.findById(req.session.user._id)
     .then(user => {
+      if (!user) {
+        return next();
+      }
       req.user = user;
       next();
     })
     .catch(err => {
-      console.log(err);
+      next(new Error(err));
     });
-});
-
-app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.session.isLoggedIn;
-  res.locals.csrfToken = req.csrfToken();
-  next();
 });
 
 // Routes
@@ -66,7 +69,11 @@ app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
-app.use(errorController.get404);
+app.use(get404);
+
+app.use((err, req, res, next) => {
+  res.status(500).render("500", { pageTitle: "Internal Server Error", path: "/500" });
+});
 
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
   .then(result => {
